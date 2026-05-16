@@ -25,7 +25,7 @@ h1{font-size:17px;font-weight:500;color:#555;text-align:center}
 .metric .lbl{font-size:10px;color:#aaa;letter-spacing:.4px;text-transform:uppercase}
 .metric .val{font-size:18px;font-weight:600;color:#1a1a1a;margin-top:1px}
 .badge{text-align:center;font-size:13px;padding:8px 20px;border-radius:10px;
-       background:#fff8e1;color:#795548;width:100%;max-width:320px}
+       background:#fff8e1;color:#795548;width:100%;max-width:320px;line-height:1.5}
 .badge.ok  {background:#e8f5e9;color:#2e7d32}
 .badge.err {background:#ffebee;color:#c62828}
 .badge.info{background:#e3f2fd;color:#1565c0}
@@ -46,17 +46,14 @@ h1{font-size:17px;font-weight:500;color:#555;text-align:center}
 
 <div class="card">
   <svg id="cvs" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <!-- Quadrante -->
     <circle cx="100" cy="100" r="96" fill="#fafafa" stroke="#ebebeb" stroke-width="1.5"/>
     <circle cx="100" cy="100" r="70" fill="none" stroke="#f4f4f4" stroke-width="1"/>
-    <!-- Tacche principali -->
     <g stroke="#e0e0e0" stroke-width="1.5">
       <line x1="100" y1="4"   x2="100" y2="22"/>
       <line x1="100" y1="178" x2="100" y2="196"/>
       <line x1="4"   y1="100" x2="22"  y2="100"/>
       <line x1="178" y1="100" x2="196" y2="100"/>
     </g>
-    <!-- Tacche secondarie -->
     <g stroke="#ececec" stroke-width="0.8">
       <line x1="152" y1="11"  x2="145" y2="23"/>
       <line x1="189" y1="48"  x2="177" y2="55"/>
@@ -67,26 +64,20 @@ h1{font-size:17px;font-weight:500;color:#555;text-align:center}
       <line x1="11"  y1="48"  x2="23"  y2="55"/>
       <line x1="48"  y1="11"  x2="55"  y2="23"/>
     </g>
-    <!-- Lettere cardinali fisse (non ruotano) -->
     <text x="100" y="19"  text-anchor="middle" font-size="13" fill="#ccc">N</text>
     <text x="100" y="196" text-anchor="middle" font-size="13" fill="#ccc">S</text>
     <text x="193" y="105" text-anchor="middle" font-size="13" fill="#ccc">E</text>
     <text x="7"   y="105" text-anchor="middle" font-size="13" fill="#ccc">O</text>
-    <!-- Freccia unica verso la destinazione -->
     <g id="arrow" transform="rotate(0,100,100)">
-      <!-- Corpo freccia -->
       <polygon points="100,28 107,95 100,112 93,95" fill="#1D9E75"/>
-      <!-- Coda -->
       <polygon points="100,112 107,95 100,172 93,95" fill="#d0ede6"/>
-      <!-- Punta decorativa -->
       <polygon points="100,22 108,42 100,36 92,42" fill="#1D9E75"/>
-      <!-- Centro -->
       <circle cx="100" cy="100" r="10" fill="#fff" stroke="#1D9E75" stroke-width="2.5"/>
       <circle cx="100" cy="100" r="3.5" fill="#1D9E75"/>
     </g>
   </svg>
 
-  <div class="dist"><span id="dist-val">--</span><span id="dist-unit">km</span></div>
+  <div class="dist"><span id="dist-val">--</span><span id="dist-unit"></span></div>
 
   <div class="metrics">
     <div class="metric"><div class="lbl">Bearing</div><div class="val" id="mb">--°</div></div>
@@ -97,13 +88,11 @@ h1{font-size:17px;font-weight:500;color:#555;text-align:center}
 <button id="start-btn" onclick="startAll()">Avvia</button>
 
 <script>
-// ── Destinazione fissa ────────────────────────────────────────
 var DST_LAT = 40.865972;
 var DST_LON  = 14.397528;
 
 var mLa=null, mLo=null, hdg=0, oOk=false, gpsOk=false;
 
-// ── Matematica ────────────────────────────────────────────────
 function toRad(d){ return d * Math.PI / 180; }
 
 function bearing(la1, lo1, la2, lo2){
@@ -123,7 +112,6 @@ function haversine(la1, lo1, la2, lo2){
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
 }
 
-// ── UI ────────────────────────────────────────────────────────
 function g(id){ return document.getElementById(id); }
 
 function bdg(msg, cls){
@@ -134,18 +122,12 @@ function bdg(msg, cls){
 
 function ui(){
   if(mLa === null) return;
-
   var b = bearing(mLa, mLo, DST_LAT, DST_LON);
   var d = haversine(mLa, mLo, DST_LAT, DST_LON);
-
-  // Angolo freccia = bearing verso destinazione MENO heading corrente
-  // Così la freccia è relativa all'orientamento del telefono
   var arrowAngle = (b - hdg + 360) % 360;
-
   g('arrow').setAttribute('transform', 'rotate('+arrowAngle.toFixed(2)+',100,100)');
   g('mb').textContent = Math.round(b) + '°';
   g('mh').textContent = Math.round(hdg) + '°';
-
   if(d >= 1){
     g('dist-val').textContent = d > 100 ? Math.round(d) : d.toFixed(1);
     g('dist-unit').textContent = ' km';
@@ -153,18 +135,14 @@ function ui(){
     g('dist-val').textContent = Math.round(d * 1000);
     g('dist-unit').textContent = ' m';
   }
-
-  if(oOk && gpsOk) bdg('Punta la freccia verde verso la destinazione', 'ok');
+  if(oOk && gpsOk) bdg('Segui la freccia verso la destinazione', 'ok');
+  else if(gpsOk)   bdg('GPS OK — in attesa del giroscopio...', 'info');
 }
 
-// ── Orientamento ──────────────────────────────────────────────
 function onOrientation(e){
   if(typeof e.webkitCompassHeading !== 'undefined' && e.webkitCompassHeading !== null){
-    // iOS: heading già in gradi da nord, senso orario
     hdg = e.webkitCompassHeading;
   } else if(e.alpha !== null){
-    // Android: alpha = rotazione del dispositivo rispetto al nord geografico
-    // Già in senso orario, non serve invertire
     hdg = e.alpha;
   }
   ui();
@@ -175,7 +153,6 @@ function startOri(){
     bdg('Giroscopio non disponibile', 'err'); return;
   }
   if(typeof DeviceOrientationEvent.requestPermission === 'function'){
-    // iOS 13+
     DeviceOrientationEvent.requestPermission()
       .then(function(state){
         if(state === 'granted'){
@@ -185,30 +162,51 @@ function startOri(){
           bdg('Permesso orientamento negato', 'err');
         }
       })
-      .catch(function(err){ bdg('Errore: ' + err, 'err'); });
+      .catch(function(err){ bdg('Errore orientamento: ' + err, 'err'); });
   } else {
     window.addEventListener('deviceorientation', onOrientation, true);
     oOk = true;
   }
 }
 
-// ── GPS ───────────────────────────────────────────────────────
 function startGPS(){
-  if(!navigator.geolocation){ bdg('GPS non disponibile', 'err'); return; }
-  bdg('Acquisizione GPS...', 'info');
+  if(!navigator.geolocation){
+    bdg('GPS non disponibile su questo dispositivo', 'err');
+    return;
+  }
+
+  bdg('In attesa del permesso GPS...', 'info');
+
   navigator.geolocation.watchPosition(
+    // Successo
     function(p){
       mLa = p.coords.latitude;
       mLo = p.coords.longitude;
       gpsOk = true;
       ui();
     },
-    function(e){ bdg('GPS: ' + e.message, 'err'); },
-    { enableHighAccuracy: true, maximumAge: 2000, timeout: 15000 }
+    // Errore — distingue i casi
+    function(e){
+      // e.code: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
+      if(e.code === 1){
+        bdg('Permesso GPS negato — abilitalo nelle impostazioni del browser', 'err');
+      } else if(e.code === 2){
+        bdg('Posizione non disponibile — riprova in esterno', 'err');
+      } else if(e.code === 3){
+        // Timeout interno: non mostrare errore, si riprova automaticamente
+        bdg('Ricerca GPS in corso...', 'info');
+      } else {
+        bdg('Errore GPS: ' + e.message, 'err');
+      }
+    },
+    {
+      enableHighAccuracy: true,
+      maximumAge: 2000
+      // Nessun timeout: il browser aspetta quanto serve per il permesso
+    }
   );
 }
 
-// ── Avvio ─────────────────────────────────────────────────────
 function startAll(){
   g('start-btn').style.display = 'none';
   startOri();
