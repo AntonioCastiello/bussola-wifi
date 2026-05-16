@@ -3,91 +3,304 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Bussola</title>
+<title>Dove sei tu, c'è casa mia ♥</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
 <style>
+:root{
+  --rose:     #c0415a;
+  --rose-light: #e8839a;
+  --rose-pale: #f9e4ea;
+  --gold:     #c9a96e;
+  --cream:    #fdf6f0;
+  --dark:     #2d1a22;
+  --pink-bg:  #fce8ef;
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-     background:#f5f5f0;color:#1a1a1a;min-height:100vh;
-     display:flex;flex-direction:column;align-items:center;
-     justify-content:center;padding:1.5rem 1rem;gap:1rem}
-h1{font-size:17px;font-weight:500;color:#555;text-align:center}
-.sub{font-size:12px;color:#aaa;text-align:center;letter-spacing:.3px;margin-top:.2rem}
-.card{background:#fff;border-radius:20px;padding:1.5rem;
-      border:0.5px solid rgba(0,0,0,0.07);
-      box-shadow:0 4px 20px rgba(0,0,0,0.07);
-      width:100%;max-width:320px;
-      display:flex;flex-direction:column;align-items:center;gap:.75rem}
-#cvs{width:260px;height:260px}
-.dist{font-size:32px;font-weight:700;color:#1D9E75;text-align:center}
-.dist span{font-size:14px;font-weight:400;color:#aaa;margin-left:4px}
+
+body{
+  font-family:'Lato',sans-serif;
+  font-weight:300;
+  background: var(--cream);
+  color: var(--dark);
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow-x:hidden;
+}
+
+/* ── Sfondo animato ── */
+.bg{
+  position:fixed;inset:0;z-index:0;
+  background: radial-gradient(ellipse at 20% 10%, #fce8ef 0%, transparent 60%),
+              radial-gradient(ellipse at 80% 90%, #fce8ef 0%, transparent 60%),
+              radial-gradient(ellipse at 50% 50%, #fdf6f0 0%, #fce0e8 100%);
+}
+.petals{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.petal{
+  position:absolute;top:-40px;
+  font-size:18px;opacity:0;
+  animation: fall linear infinite;
+}
+@keyframes fall{
+  0%  {transform:translateY(0) rotate(0deg);   opacity:.6}
+  80% {opacity:.4}
+  100%{transform:translateY(110vh) rotate(360deg); opacity:0}
+}
+
+/* ── Header ── */
+header{
+  position:relative;z-index:1;
+  text-align:center;
+  padding: 2.5rem 1.5rem 1rem;
+  max-width:360px;
+}
+.heart-deco{
+  font-size:28px;
+  animation: pulse 2s ease-in-out infinite;
+  display:block;margin-bottom:.5rem;
+  filter: drop-shadow(0 2px 8px rgba(192,65,90,.4));
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%     {transform:scale(1.15)}
+}
+h1{
+  font-family:'Playfair Display',serif;
+  font-size:22px;
+  font-weight:600;
+  color: var(--rose);
+  line-height:1.3;
+  margin-bottom:.5rem;
+}
+.subtitle{
+  font-family:'Playfair Display',serif;
+  font-style:italic;
+  font-size:14px;
+  color: var(--rose-light);
+  line-height:1.6;
+}
+
+/* ── Badge ── */
+#badge{
+  position:relative;z-index:1;
+  font-size:13px;font-weight:400;
+  padding:8px 20px;border-radius:20px;
+  margin:.5rem 0 1rem;
+  background:#fff;
+  color: var(--rose);
+  border:1px solid #f0c0cc;
+  box-shadow:0 2px 10px rgba(192,65,90,.1);
+  max-width:320px;text-align:center;
+  transition: all .3s;
+}
+#badge.ok {background:var(--rose);color:#fff;border-color:var(--rose)}
+#badge.err{background:#fff0f3;color:#a0283c;border-color:#f0c0cc}
+#badge.info{background:#fff8f0;color:var(--gold);border-color:#f0dfc0}
+
+/* ── Card bussola ── */
+.compass-card{
+  position:relative;z-index:1;
+  background:#fff;
+  border-radius:24px;
+  padding:1.75rem 1.5rem;
+  margin-bottom:1.25rem;
+  width:100%;max-width:340px;
+  box-shadow:
+    0 4px 30px rgba(192,65,90,.12),
+    0 1px 4px rgba(192,65,90,.06);
+  border:1px solid #f5d5dd;
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+}
+
+/* ── Bussola SVG ── */
+#cvs{width:270px;height:270px;filter:drop-shadow(0 4px 16px rgba(192,65,90,.2))}
+
+/* ── Distanza ── */
+.dist-wrap{text-align:center}
+.dist-wrap .lbl{
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-size:13px;
+  color:var(--rose-light);margin-bottom:2px;
+}
+.dist-wrap .val{
+  font-family:'Playfair Display',serif;
+  font-size:36px;font-weight:600;
+  color:var(--rose);line-height:1;
+}
+.dist-wrap .unit{
+  font-size:14px;font-weight:300;
+  color:var(--rose-light);margin-left:4px;
+}
+
+/* ── Metriche ── */
 .metrics{display:grid;grid-template-columns:1fr 1fr;gap:8px;width:100%}
-.metric{background:#f8f8f4;border-radius:10px;padding:.6rem .75rem;text-align:center}
-.metric .lbl{font-size:10px;color:#aaa;letter-spacing:.4px;text-transform:uppercase}
-.metric .val{font-size:18px;font-weight:600;color:#1a1a1a;margin-top:1px}
-.badge{text-align:center;font-size:13px;padding:8px 20px;border-radius:10px;
-       background:#fff8e1;color:#795548;width:100%;max-width:320px;line-height:1.5}
-.badge.ok  {background:#e8f5e9;color:#2e7d32}
-.badge.err {background:#ffebee;color:#c62828}
-.badge.info{background:#e3f2fd;color:#1565c0}
-#start-btn{padding:14px 40px;border:none;border-radius:14px;
-           font-size:16px;font-weight:500;background:#1D9E75;color:#fff;
-           cursor:pointer;box-shadow:0 4px 14px rgba(29,158,117,.35)}
-#start-btn:active{opacity:.8}
+.metric{
+  background:var(--rose-pale);
+  border-radius:12px;padding:.6rem .75rem;text-align:center;
+  border:1px solid #f0d0d8;
+}
+.metric .lbl{font-size:10px;color:var(--rose-light);letter-spacing:.5px;text-transform:uppercase}
+.metric .val{font-size:18px;font-weight:600;color:var(--rose);margin-top:2px}
+
+/* ── Pulsante ── */
+#start-btn{
+  position:relative;z-index:1;
+  padding:14px 48px;border:none;border-radius:50px;
+  font-family:'Playfair Display',serif;
+  font-size:16px;font-style:italic;
+  background: linear-gradient(135deg, var(--rose) 0%, #a02040 100%);
+  color:#fff;cursor:pointer;
+  box-shadow:0 6px 20px rgba(192,65,90,.4);
+  transition:transform .15s, box-shadow .15s;
+  margin-bottom:.5rem;
+}
+#start-btn:active{transform:scale(.97);box-shadow:0 3px 10px rgba(192,65,90,.3)}
+
+/* ── Citazione in fondo ── */
+.quote{
+  position:relative;z-index:1;
+  font-family:'Playfair Display',serif;
+  font-style:italic;font-size:13px;
+  color:var(--rose-light);
+  text-align:center;
+  max-width:280px;
+  padding:.75rem 1rem;
+  margin-bottom:2rem;
+  line-height:1.7;
+}
+.quote::before,.quote::after{
+  content:'"';
+  font-size:28px;color:#f0c0cc;
+  line-height:0;vertical-align:-.4em;
+}
 </style>
 </head>
 <body>
 
-<div>
-  <h1>&#129517; Bussola</h1>
-  <p class="sub">40°51′57.5″N &nbsp; 14°23′51.1″E</p>
-</div>
+<!-- Sfondo -->
+<div class="bg"></div>
+<div class="petals" id="petals"></div>
 
-<div id="badge" class="badge">Premi Avvia</div>
+<!-- Header -->
+<header>
+  <span class="heart-deco">🌹</span>
+  <h1>Dove sei tu,<br>c'è il mio cuore</h1>
+  <p class="subtitle">Questa bussola punta sempre<br>verso di te, ovunque io sia</p>
+</header>
 
-<div class="card">
+<!-- Badge -->
+<div id="badge">Premi il cuore per cominciare</div>
+
+<!-- Bussola -->
+<div class="compass-card">
   <svg id="cvs" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="100" cy="100" r="96" fill="#fafafa" stroke="#ebebeb" stroke-width="1.5"/>
-    <circle cx="100" cy="100" r="70" fill="none" stroke="#f4f4f4" stroke-width="1"/>
-    <g stroke="#e0e0e0" stroke-width="1.5">
+    <!-- Quadrante esterno -->
+    <circle cx="100" cy="100" r="97" fill="url(#grad-bg)" stroke="url(#grad-ring)" stroke-width="1.5"/>
+    <!-- Anello decorativo -->
+    <circle cx="100" cy="100" r="90" fill="none" stroke="#f5d5dd" stroke-width=".5"/>
+    <circle cx="100" cy="100" r="68" fill="none" stroke="#f5d5dd" stroke-width=".5"/>
+
+    <defs>
+      <radialGradient id="grad-bg" cx="50%" cy="40%" r="60%">
+        <stop offset="0%" stop-color="#fff"/>
+        <stop offset="100%" stop-color="#fdf0f3"/>
+      </radialGradient>
+      <linearGradient id="grad-ring" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#e8839a"/>
+        <stop offset="100%" stop-color="#c0415a"/>
+      </linearGradient>
+      <linearGradient id="grad-needle" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#c0415a"/>
+        <stop offset="100%" stop-color="#8a1a30"/>
+      </linearGradient>
+      <linearGradient id="grad-tail" x1="0%" y1="0%" x2="0%" y2="100%">
+        <stop offset="0%" stop-color="#f0c0cc"/>
+        <stop offset="100%" stop-color="#e8a0b0"/>
+      </linearGradient>
+      <filter id="shadow">
+        <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#c0415a" flood-opacity=".3"/>
+      </filter>
+    </defs>
+
+    <!-- Tacche grandi (N S E O) -->
+    <g stroke="#e8839a" stroke-width="2" stroke-linecap="round">
       <line x1="100" y1="4"   x2="100" y2="22"/>
       <line x1="100" y1="178" x2="100" y2="196"/>
       <line x1="4"   y1="100" x2="22"  y2="100"/>
       <line x1="178" y1="100" x2="196" y2="100"/>
     </g>
-    <g stroke="#ececec" stroke-width="0.8">
-      <line x1="152" y1="11"  x2="145" y2="23"/>
-      <line x1="189" y1="48"  x2="177" y2="55"/>
-      <line x1="189" y1="152" x2="177" y2="145"/>
-      <line x1="152" y1="189" x2="145" y2="177"/>
-      <line x1="48"  y1="189" x2="55"  y2="177"/>
-      <line x1="11"  y1="152" x2="23"  y2="145"/>
-      <line x1="11"  y1="48"  x2="23"  y2="55"/>
-      <line x1="48"  y1="11"  x2="55"  y2="23"/>
+    <!-- Tacche piccole ogni 30° -->
+    <g stroke="#f0c0cc" stroke-width="1" stroke-linecap="round">
+      <line x1="152" y1="11"  x2="147" y2="21"/>
+      <line x1="189" y1="48"  x2="179" y2="53"/>
+      <line x1="189" y1="152" x2="179" y2="147"/>
+      <line x1="152" y1="189" x2="147" y2="179"/>
+      <line x1="48"  y1="189" x2="53"  y2="179"/>
+      <line x1="11"  y1="152" x2="21"  y2="147"/>
+      <line x1="11"  y1="48"  x2="21"  y2="53"/>
+      <line x1="48"  y1="11"  x2="53"  y2="21"/>
     </g>
-    <text x="100" y="19"  text-anchor="middle" font-size="13" fill="#ccc">N</text>
-    <text x="100" y="196" text-anchor="middle" font-size="13" fill="#ccc">S</text>
-    <text x="193" y="105" text-anchor="middle" font-size="13" fill="#ccc">E</text>
-    <text x="7"   y="105" text-anchor="middle" font-size="13" fill="#ccc">O</text>
-    <g id="arrow" transform="rotate(0,100,100)">
-      <polygon points="100,28 107,95 100,112 93,95" fill="#1D9E75"/>
-      <polygon points="100,112 107,95 100,172 93,95" fill="#d0ede6"/>
-      <polygon points="100,22 108,42 100,36 92,42" fill="#1D9E75"/>
-      <circle cx="100" cy="100" r="10" fill="#fff" stroke="#1D9E75" stroke-width="2.5"/>
-      <circle cx="100" cy="100" r="3.5" fill="#1D9E75"/>
+    <!-- Lettere cardinali -->
+    <text x="100" y="17"  text-anchor="middle" font-family="Georgia,serif" font-size="12" font-weight="bold" fill="#c0415a">N</text>
+    <text x="100" y="197" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#e8a0b0">S</text>
+    <text x="195" y="104" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#e8a0b0">E</text>
+    <text x="5"   y="104" text-anchor="middle" font-family="Georgia,serif" font-size="11" fill="#e8a0b0">O</text>
+
+    <!-- Cerchio centrale decorativo -->
+    <circle cx="100" cy="100" r="18" fill="#fff" stroke="#f0c0cc" stroke-width="1"/>
+
+    <!-- Ago (ruota) -->
+    <g id="arrow" transform="rotate(0,100,100)" filter="url(#shadow)">
+      <!-- Punta (verso destinazione) -->
+      <polygon points="100,24 107,92 100,108 93,92" fill="url(#grad-needle)"/>
+      <!-- Coda -->
+      <polygon points="100,108 107,92 100,176 93,92" fill="url(#grad-tail)"/>
+      <!-- Cuoricino in punta -->
+      <text x="100" y="36" text-anchor="middle" font-size="11" fill="#fff">♥</text>
+      <!-- Disco centrale -->
+      <circle cx="100" cy="100" r="11" fill="#fff" stroke="#e8839a" stroke-width="1.5"/>
+      <circle cx="100" cy="100" r="4"  fill="#c0415a"/>
     </g>
   </svg>
 
-  <div class="dist"><span id="dist-val">--</span><span id="dist-unit"></span></div>
+  <!-- Distanza -->
+  <div class="dist-wrap">
+    <div class="lbl">distanza</div>
+    <div class="val"><span id="dist-val">--</span><span class="unit" id="dist-unit"></span></div>
+  </div>
 
+  <!-- Metriche -->
   <div class="metrics">
-    <div class="metric"><div class="lbl">Bearing</div><div class="val" id="mb">--°</div></div>
+    <div class="metric"><div class="lbl">Direzione</div><div class="val" id="mb">--°</div></div>
     <div class="metric"><div class="lbl">Heading</div><div class="val" id="mh">--°</div></div>
   </div>
 </div>
 
-<button id="start-btn" onclick="startAll()">Avvia</button>
+<!-- Pulsante avvio -->
+<button id="start-btn" onclick="startAll()">♥ Trovami</button>
+
+<!-- Citazione -->
+<p class="quote">Ogni bussola punta al Nord, la mia punta sempre a te</p>
 
 <script>
+// ── Petali animati ────────────────────────────────────────────
+(function(){
+  var emojis = ['🌸','🌺','❤️','🌹','💕','✨'];
+  var container = document.getElementById('petals');
+  for(var i=0;i<18;i++){
+    var p = document.createElement('div');
+    p.className = 'petal';
+    p.textContent = emojis[i % emojis.length];
+    p.style.left = (Math.random()*100)+'%';
+    p.style.animationDuration = (6+Math.random()*10)+'s';
+    p.style.animationDelay    = (Math.random()*10)+'s';
+    p.style.fontSize = (13+Math.random()*10)+'px';
+    container.appendChild(p);
+  }
+})();
+
+// ── Destinazione fissa ────────────────────────────────────────
 var DST_LAT = 40.865972;
 var DST_LON  = 14.397528;
 
@@ -95,120 +308,112 @@ var mLa=null, mLo=null, hdg=0, oOk=false, gpsOk=false;
 
 function toRad(d){ return d * Math.PI / 180; }
 
-function bearing(la1, lo1, la2, lo2){
-  var dL = toRad(lo2 - lo1);
-  var r1 = toRad(la1), r2 = toRad(la2);
-  var y  = Math.sin(dL) * Math.cos(r2);
-  var x  = Math.cos(r1)*Math.sin(r2) - Math.sin(r1)*Math.cos(r2)*Math.cos(dL);
-  return (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+function bearing(la1,lo1,la2,lo2){
+  var dL=toRad(lo2-lo1), r1=toRad(la1), r2=toRad(la2);
+  var y=Math.sin(dL)*Math.cos(r2);
+  var x=Math.cos(r1)*Math.sin(r2)-Math.sin(r1)*Math.cos(r2)*Math.cos(dL);
+  return (Math.atan2(y,x)*180/Math.PI+360)%360;
 }
 
-function haversine(la1, lo1, la2, lo2){
-  var R  = 6371;
-  var da = toRad(la2 - la1), dlo = toRad(lo2 - lo1);
-  var a  = Math.sin(da/2)*Math.sin(da/2) +
-           Math.cos(toRad(la1))*Math.cos(toRad(la2))*
-           Math.sin(dlo/2)*Math.sin(dlo/2);
-  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+function haversine(la1,lo1,la2,lo2){
+  var R=6371, da=toRad(la2-la1), dlo=toRad(lo2-lo1);
+  var a=Math.sin(da/2)*Math.sin(da/2)+
+        Math.cos(toRad(la1))*Math.cos(toRad(la2))*
+        Math.sin(dlo/2)*Math.sin(dlo/2);
+  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
 }
 
 function g(id){ return document.getElementById(id); }
 
-function bdg(msg, cls){
-  var b = g('badge');
-  b.textContent = msg;
-  b.className = 'badge' + (cls ? ' '+cls : '');
+function bdg(msg,cls){
+  var b=g('badge');
+  b.textContent=msg;
+  b.className=(cls?cls:'');
+  b.id='badge';
 }
 
 function ui(){
-  if(mLa === null) return;
-  var b = bearing(mLa, mLo, DST_LAT, DST_LON);
-  var d = haversine(mLa, mLo, DST_LAT, DST_LON);
-  var arrowAngle = (b - hdg + 360) % 360;
-  g('arrow').setAttribute('transform', 'rotate('+arrowAngle.toFixed(2)+',100,100)');
-  g('mb').textContent = Math.round(b) + '°';
-  g('mh').textContent = Math.round(hdg) + '°';
-  if(d >= 1){
-    g('dist-val').textContent = d > 100 ? Math.round(d) : d.toFixed(1);
-    g('dist-unit').textContent = ' km';
+  if(mLa===null) return;
+  var b=bearing(mLa,mLo,DST_LAT,DST_LON);
+  var d=haversine(mLa,mLo,DST_LAT,DST_LON);
+  var angle=(b-hdg+360)%360;
+  g('arrow').setAttribute('transform','rotate('+angle.toFixed(2)+',100,100)');
+  g('mb').textContent=Math.round(b)+'°';
+  g('mh').textContent=Math.round(hdg)+'°';
+  if(d>=1){
+    g('dist-val').textContent=d>100?Math.round(d):d.toFixed(1);
+    g('dist-unit').textContent=' km';
   } else {
-    g('dist-val').textContent = Math.round(d * 1000);
-    g('dist-unit').textContent = ' m';
+    g('dist-val').textContent=Math.round(d*1000);
+    g('dist-unit').textContent=' m';
   }
-  if(oOk && gpsOk) bdg('Segui la freccia verso la destinazione', 'ok');
-  else if(gpsOk)   bdg('GPS OK — in attesa del giroscopio...', 'info');
+  if(oOk&&gpsOk) bdg('♥ Segui la freccia verso di lei','ok');
+  else if(gpsOk)  bdg('GPS attivo — in attesa del giroscopio...','info');
 }
 
 function onOrientation(e){
-  if(typeof e.webkitCompassHeading !== 'undefined' && e.webkitCompassHeading !== null){
-    hdg = e.webkitCompassHeading;
-  } else if(e.alpha !== null){
-    hdg = e.alpha;
+  if(typeof e.webkitCompassHeading!=='undefined'&&e.webkitCompassHeading!==null){
+    hdg=e.webkitCompassHeading;
+  } else if(e.alpha!==null){
+    hdg=e.alpha;
   }
   ui();
 }
 
 function startOri(){
-  if(typeof DeviceOrientationEvent === 'undefined'){
-    bdg('Giroscopio non disponibile', 'err'); return;
-  }
-  if(typeof DeviceOrientationEvent.requestPermission === 'function'){
+  if(typeof DeviceOrientationEvent==='undefined') return;
+  if(typeof DeviceOrientationEvent.requestPermission==='function'){
     DeviceOrientationEvent.requestPermission()
-      .then(function(state){
-        if(state === 'granted'){
-          window.addEventListener('deviceorientation', onOrientation, true);
-          oOk = true;
-        } else {
-          bdg('Permesso orientamento negato', 'err');
+      .then(function(s){
+        if(s==='granted'){
+          window.addEventListener('deviceorientation',onOrientation,true);
+          oOk=true;
         }
-      })
-      .catch(function(err){ bdg('Errore orientamento: ' + err, 'err'); });
+      }).catch(function(){});
   } else {
-    window.addEventListener('deviceorientation', onOrientation, true);
-    oOk = true;
+    window.addEventListener('deviceorientation',onOrientation,true);
+    oOk=true;
   }
 }
 
 function startGPS(){
   if(!navigator.geolocation){
-    bdg('GPS non disponibile su questo dispositivo', 'err');
-    return;
+    bdg('GPS non disponibile','err'); return;
   }
+  bdg('In attesa del permesso GPS...','info');
 
-  bdg('In attesa del permesso GPS...', 'info');
-
-  navigator.geolocation.watchPosition(
-    // Successo
+  // Prima chiamata singola per far apparire il popup di sistema
+  navigator.geolocation.getCurrentPosition(
     function(p){
-      mLa = p.coords.latitude;
-      mLo = p.coords.longitude;
-      gpsOk = true;
+      mLa=p.coords.latitude;
+      mLo=p.coords.longitude;
+      gpsOk=true;
       ui();
+      // Poi avvia il watch continuo
+      navigator.geolocation.watchPosition(
+        function(p2){
+          mLa=p2.coords.latitude;
+          mLo=p2.coords.longitude;
+          ui();
+        },
+        function(){},
+        {enableHighAccuracy:true, maximumAge:2000}
+      );
     },
-    // Errore — distingue i casi
     function(e){
-      // e.code: 1=PERMISSION_DENIED, 2=POSITION_UNAVAILABLE, 3=TIMEOUT
-      if(e.code === 1){
-        bdg('Permesso GPS negato — abilitalo nelle impostazioni del browser', 'err');
-      } else if(e.code === 2){
-        bdg('Posizione non disponibile — riprova in esterno', 'err');
-      } else if(e.code === 3){
-        // Timeout interno: non mostrare errore, si riprova automaticamente
-        bdg('Ricerca GPS in corso...', 'info');
+      if(e.code===1){
+        bdg('Permesso GPS negato — abilitalo in Impostazioni → Privacy → Localizzazione → Safari','err');
       } else {
-        bdg('Errore GPS: ' + e.message, 'err');
+        bdg('Posizione non disponibile — riprova all\'aperto','err');
       }
     },
-    {
-      enableHighAccuracy: true,
-      maximumAge: 2000
-      // Nessun timeout: il browser aspetta quanto serve per il permesso
-    }
+    {enableHighAccuracy:true}
+    // Nessun timeout: iOS aspetta la risposta dell'utente
   );
 }
 
 function startAll(){
-  g('start-btn').style.display = 'none';
+  g('start-btn').style.display='none';
   startOri();
   startGPS();
 }
